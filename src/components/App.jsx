@@ -13,7 +13,7 @@ import {
 
 export const App = () => {
   const dispatch = useDispatch();
-  const contacts = Object.values(useSelector(getContacts));
+  const contacts = useSelector(getContacts).contacts;
   const filter = useSelector(getFilter);
 
   const addContact = ({ name, number }) => {
@@ -29,8 +29,7 @@ export const App = () => {
   const checkForSameName = oneContact => {
     if (
       contacts.find(
-        contact =>
-          contact?.name?.toLowerCase() === oneContact.name.toLowerCase()
+        contact => contact.name.toLowerCase() === oneContact.name.toLowerCase()
       )
     ) {
       alert(`${oneContact.name} is already in contacts`);
@@ -53,7 +52,7 @@ export const App = () => {
     const normalizedFilter = filter.toLowerCase();
 
     return contacts.filter(contact =>
-      contact?.name?.toLowerCase()?.includes(normalizedFilter)
+      contact.name.toLowerCase().includes(normalizedFilter)
     );
   };
 
