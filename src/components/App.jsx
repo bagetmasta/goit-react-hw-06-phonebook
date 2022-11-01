@@ -1,27 +1,20 @@
-import { useState, useEffect } from 'react';
 import { ContactForm } from './ContactForm/ContactForm';
 import { Container } from './Container/Container';
 import { ContactsList } from './ContactsList/ContactsList';
 import { Filter } from './Filter/Filter';
 import { nanoid } from 'nanoid';
+import { useSelector, useDispatch } from 'react-redux/es/exports';
+import { filterContact, getFilter } from 'redux/filterSlice';
+import {
+  addOneContact,
+  deleteOneContact,
+  getContacts,
+} from 'redux/contactSlice';
 
 export const App = () => {
-  const contactsDefaultArray = [
-    { id: 'id-1', name: 'Mukola Trush', number: '777-77-77' },
-    { id: 'id-2', name: 'Rosie Simpson', number: '459-12-56' },
-    { id: 'id-3', name: 'Hermione Kline', number: '443-89-12' },
-    { id: 'id-4', name: 'Eden Clements', number: '645-17-79' },
-  ];
-
-  const [contacts, setContacts] = useState(
-    () => JSON.parse(localStorage.getItem('contacts')) ?? contactsDefaultArray
-  );
-
-  const [filter, setFilter] = useState('');
-
-  useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
+  const dispatch = useDispatch();
+  const contacts = Object.values(useSelector(getContacts));
+  const filter = useSelector(getFilter);
 
   const addContact = ({ name, number }) => {
     const oneContact = {
@@ -34,28 +27,33 @@ export const App = () => {
   };
 
   const checkForSameName = oneContact => {
-    if (contacts.find(contact => contact.name === oneContact.name)) {
+    if (
+      contacts.find(
+        contact =>
+          contact?.name?.toLowerCase() === oneContact.name.toLowerCase()
+      )
+    ) {
       alert(`${oneContact.name} is already in contacts`);
 
       return;
     }
 
-    setContacts(prevState => [oneContact, ...contacts]);
+    dispatch(addOneContact(oneContact));
   };
 
   const deleteContact = id => {
-    setContacts(prevState => contacts.filter(contact => contact.id !== id));
+    dispatch(deleteOneContact(id));
   };
 
   const filterChange = value => {
-    setFilter(value);
+    dispatch(filterContact(value));
   };
 
   const getVisibleContacts = () => {
     const normalizedFilter = filter.toLowerCase();
 
     return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter)
+      contact?.name?.toLowerCase()?.includes(normalizedFilter)
     );
   };
 
