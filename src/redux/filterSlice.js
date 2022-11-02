@@ -14,5 +14,3 @@ export const { filterContact } = filterSlice.actions;
 
 // Selectors
 export const getFilter = state => state.filter;
-
-// return { ...state, contacts: { ...state.contacts, ...action.payload } };
